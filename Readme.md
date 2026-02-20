@@ -50,5 +50,4 @@ gradle :api-aggregator:bootRun
 - 타임아웃 → paymentId: FALLBACK 폴백 응답 확인
 - 5회 실패 → 서킷브레이커 OPEN 상태 확인
 - 2.5초 대기 → HALF_OPEN 전환 확인# webflux_leanring
-# webflux_leanring
-# webflux_leanring
+
