@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Mock 외부 서버 API 테스트" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-02-20T05:37:00.427Z" hostname="1000bangui-MacBookAir.local" time="3.661">
+  <properties/>
+  <testcase name="사용자 API: 1초 지연 후 정상 응답 (200 OK) 반환 검증" classname="com.example.mock.MockControllerTest" time="1.614"/>
+  <testcase name="결제 API fail=true: 즉시 HTTP 500 오류 반환 검증" classname="com.example.mock.MockControllerTest" time="0.022"/>
+  <testcase name="주문 API: 2초 지연 후 정상 응답 (200 OK) 반환 검증" classname="com.example.mock.MockControllerTest" time="2.024"/>
+  <system-out><![CDATA[14:36:59.466 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.mock.MockControllerTest]: MockControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:36:59.524 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.mock.MockServerApplication for test class com.example.mock.MockControllerTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.4)
+
+14:36:59.735 [Test worker] INFO  com.example.mock.MockControllerTest - Starting MockControllerTest using Java 17.0.14 with PID 69020 (started by 1000bang in /Users/1000bang/webflux-test/mock-external-server)
+14:36:59.736 [Test worker] DEBUG com.example.mock.MockControllerTest - Running with Spring Boot v3.3.4, Spring v6.1.13
+14:36:59.736 [Test worker] INFO  com.example.mock.MockControllerTest - No active profile set, falling back to 1 default profile: "default"
+14:37:00.409 [Test worker] INFO  o.s.b.w.e.netty.NettyWebServer - Netty started on port 50220 (http)
+14:37:00.422 [Test worker] INFO  com.example.mock.MockControllerTest - Started MockControllerTest in 0.82 seconds (process running for 1.356)
+
+============================================================
+사용자 API 테스트: GET /user
+  예상: 1초 지연 후 200 OK 응답
+============================================================
+14:37:00.925 [parallel-1] INFO  c.e.mock.controller.MockController - [사용자 API] 요청 수신 | 스레드: parallel-1
+14:37:01.945 [parallel-2] INFO  c.e.mock.controller.MockController - [사용자 API] 응답 준비 완료 | 스레드: parallel-2
+  응답 시간: 1140ms
+  응답 데이터: {id=1, name=홍길동, email=hong@example.com, message=사용자 정보 조회 성공 (1초 지연), timestamp=2026-02-20T14:37:01.946062}
+  검증 완료: 응답 시간 1140ms ≥ 1000ms (Mono.delay 논블로킹 지연 확인)
+
+============================================================
+결제 API 실패 테스트: GET /payment?fail=true
+  예상: 즉시 HTTP 500 Internal Server Error
+  목적: 서킷브레이커 학습 - 실패 카운트 증가용
+============================================================
+14:37:02.051 [parallel-3] INFO  c.e.mock.controller.MockController - [결제 API] 요청 수신 | fail=true | 스레드: parallel-3
+14:37:02.051 [parallel-3] ERROR c.e.mock.controller.MockController - [결제 API] 강제 실패 시나리오 실행 | 스레드: parallel-3
+14:37:02.056 [parallel-3] ERROR c.e.m.c.GlobalExceptionHandler - [오류 처리] 결제 예외 발생: 결제 서버 내부 오류: 의도적인 실패 시나리오 (서킷브레이커 학습용)
+  응답 시간: 19ms (즉시 응답)
+  응답 데이터: {error=결제 처리 실패, message=결제 서버 내부 오류: 의도적인 실패 시나리오 (서킷브레이커 학습용), status=500, timestamp=2026-02-20T14:37:02.057435}
+  검증 완료: HTTP 500 즉시 반환 (19ms)
+
+============================================================
+주문 API 테스트: GET /order
+  예상: 2초 지연 후 200 OK 응답
+============================================================
+14:37:02.066 [parallel-4] INFO  c.e.mock.controller.MockController - [주문 API] 요청 수신 | 스레드: parallel-4
+14:37:04.077 [parallel-5] INFO  c.e.mock.controller.MockController - [주문 API] 응답 준비 완료 | 스레드: parallel-5
+  응답 시간: 2020ms
+  응답 데이터: {orderId=ORDER-2024-001, items=[상품A, 상품B, 상품C], totalAmount=150000, message=주문 정보 조회 성공 (2초 지연), timestamp=2026-02-20T14:37:04.078570}
+  검증 완료: 응답 시간 2020ms ≥ 2000ms (Mono.delay 논블로킹 지연 확인)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

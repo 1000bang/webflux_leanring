@@ -1,0 +1,37 @@
+# api-aggregator 설정
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-aggregator
+
+# 외부 서버 URL 설정 (테스트에서 오버라이드 가능)
+external-server:
+  base-url: http://localhost:8081
+
+# ============================================================
+# Resilience4j 서킷브레이커 설정
+# 학습 포인트:
+#   - sliding-window-size: 슬라이딩 윈도우 크기 (최근 N번의 호출 기준)
+#   - failure-rate-threshold: 실패율 임계값 (%) - 이를 초과하면 서킷 오픈
+#   - wait-duration-in-open-state: 오픈 상태 유지 시간 후 HALF-OPEN 전환
+#   - minimum-number-of-calls: 실패율 계산에 필요한 최소 호출 횟수
+# ============================================================
+resilience4j:
+  circuitbreaker:
+    instances:
+      payment:
+        sliding-window-size: 5                              # 최근 5번의 호출로 실패율 계산
+        failure-rate-threshold: 50                          # 실패율 50% 초과 시 서킷 오픈
+        wait-duration-in-open-state: 10s                   # 10초 후 HALF-OPEN으로 자동 전환
+        minimum-number-of-calls: 5                          # 최소 5번 호출 후 실패율 계산 시작
+        permitted-number-of-calls-in-half-open-state: 2    # HALF-OPEN 상태에서 허용 호출 수
+        automatic-transition-from-open-to-half-open-enabled: true  # 10초 후 자동으로 HALF-OPEN 전환
+
+logging:
+  level:
+    com.example.aggregator: DEBUG
+    io.github.resilience4j: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

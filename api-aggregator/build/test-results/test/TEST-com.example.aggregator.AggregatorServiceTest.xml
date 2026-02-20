@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="API 집계 서비스 테스트" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-02-20T05:51:26" hostname="1000bangui-MacBookAir.local" time="7.972">
+  <properties/>
+  <testcase name="학습 시나리오 1 - ZIP(병렬)이 flatMap(순차)보다 빠른지 검증" classname="com.example.aggregator.AggregatorServiceTest" time="2.622"/>
+  <testcase name="학습 시나리오 2 - 결제 API 2초 지연 시 1초 타임아웃 후 폴백 응답 반환" classname="com.example.aggregator.AggregatorServiceTest" time="2.015"/>
+  <testcase name="학습 시나리오 3 - 결제 API 5회 연속 실패 후 서킷브레이커 OPEN 상태 전환" classname="com.example.aggregator.AggregatorServiceTest" time="0.57"/>
+  <testcase name="학습 시나리오 4 - 서킷 OPEN 후 대기 시간 경과 시 HALF-OPEN 상태 전환" classname="com.example.aggregator.AggregatorServiceTest" time="2.76"/>
+  <system-out><![CDATA[
+============================================================
+학습 시나리오 1: ZIP(병렬) vs flatMap(순차) 실행 시간 비교
+  디스패처 설정: 사용자 300ms, 주문 700ms, 결제 200ms
+  ZIP 예상 시간: max(300, 700, 200) ≈ 700ms (병렬)
+  flatMap 예상 시간: 300 + 700 + 200 ≈ 1200ms (순차)
+============================================================
+14:51:26.697 [Test worker] INFO com.example.aggregator.service.AggregatorService -- 
+14:51:26.698 [Test worker] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+14:51:26.698 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [ZIP 모드 시작] 병렬 실행 - 3개의 API를 동시에 호출합니다
+14:51:26.698 [Test worker] INFO com.example.aggregator.service.AggregatorService --   시작 시각: 2026-02-20T14:51:26.698503
+14:51:26.698 [Test worker] INFO com.example.aggregator.service.AggregatorService --   스레드: Test worker
+14:51:26.698 [Test worker] INFO com.example.aggregator.service.AggregatorService --   예상 소요시간: max(사용자1초, 주문2초, 결제1초폴백) ≈ 2초
+14:51:26.698 [Test worker] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+14:51:26.698 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [사용자 API 시작] 시각: 2026-02-20T14:51:26.698833 | 스레드: Test worker
+14:51:26.744 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [주문 API 시작] 시각: 2026-02-20T14:51:26.744219 | 스레드: Test worker
+14:51:26.748 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:26.748383 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:26.805 [Test worker] ERROR io.netty.resolver.dns.DnsServerAddressStreamProviders -- Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
+14:51:27.123 [reactor-http-nio-4] INFO com.example.aggregator.service.AggregatorService -- [결제 API 완료] 시각: 2026-02-20T14:51:27.123005 | 스레드: reactor-http-nio-4 | 서킷브레이커 상태: CLOSED
+14:51:27.180 [reactor-http-nio-2] INFO com.example.aggregator.service.AggregatorService -- [사용자 API 완료] 시각: 2026-02-20T14:51:27.180316 | 스레드: reactor-http-nio-2
+14:51:27.588 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- [주문 API 완료] 시각: 2026-02-20T14:51:27.587689 | 스레드: reactor-http-nio-3
+14:51:27.589 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- 
+14:51:27.589 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+14:51:27.590 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- [ZIP 모드 완료] 병렬 실행 결과
+14:51:27.590 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   종료 시각: 2026-02-20T14:51:27.590390
+14:51:27.593 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   총 실행 시간: 892ms
+14:51:27.593 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   스레드: reactor-http-nio-3
+14:51:27.593 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   → 3개 API가 동시에 실행되어 가장 느린 API(주문 2초) 수준
+14:51:27.593 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+14:51:27.594 [Test worker] INFO com.example.aggregator.service.AggregatorService -- 
+14:51:27.594 [Test worker] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+14:51:27.594 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [FLATMAP 모드 시작] 순차 실행 - API를 하나씩 순서대로 호출합니다
+14:51:27.594 [Test worker] INFO com.example.aggregator.service.AggregatorService --   시작 시각: 2026-02-20T14:51:27.594794
+14:51:27.595 [Test worker] INFO com.example.aggregator.service.AggregatorService --   스레드: Test worker
+14:51:27.595 [Test worker] INFO com.example.aggregator.service.AggregatorService --   예상 소요시간: 사용자(1초) + 주문(2초) + 결제(1초폴백) ≈ 4초
+14:51:27.595 [Test worker] INFO com.example.aggregator.service.AggregatorService --   실행 순서: 사용자 API → (완료 후) 주문 API → (완료 후) 결제 API
+14:51:27.595 [Test worker] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+14:51:27.595 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [사용자 API 시작] 시각: 2026-02-20T14:51:27.595590 | 스레드: Test worker
+14:51:27.918 [reactor-http-nio-4] INFO com.example.aggregator.service.AggregatorService -- [사용자 API 완료] 시각: 2026-02-20T14:51:27.918863 | 스레드: reactor-http-nio-4
+14:51:27.919 [reactor-http-nio-4] INFO com.example.aggregator.service.AggregatorService --   [FLATMAP] 사용자 API 완료 → 주문 API 호출 시작 | 스레드: reactor-http-nio-4
+14:51:27.919 [reactor-http-nio-4] INFO com.example.aggregator.service.AggregatorService -- [주문 API 시작] 시각: 2026-02-20T14:51:27.919288 | 스레드: reactor-http-nio-4
+14:51:28.631 [reactor-http-nio-2] INFO com.example.aggregator.service.AggregatorService -- [주문 API 완료] 시각: 2026-02-20T14:51:28.631170 | 스레드: reactor-http-nio-2
+14:51:28.632 [reactor-http-nio-2] INFO com.example.aggregator.service.AggregatorService --   [FLATMAP] 주문 API 완료 → 결제 API 호출 시작 | 스레드: reactor-http-nio-2
+14:51:28.632 [reactor-http-nio-2] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:28.632735 | 스레드: reactor-http-nio-2 | 서킷브레이커 상태: CLOSED
+14:51:28.847 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- [결제 API 완료] 시각: 2026-02-20T14:51:28.847472 | 스레드: reactor-http-nio-3 | 서킷브레이커 상태: CLOSED
+14:51:28.847 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- 
+14:51:28.848 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+14:51:28.848 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- [FLATMAP 모드 완료] 순차 실행 결과
+14:51:28.849 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   종료 시각: 2026-02-20T14:51:28.848838
+14:51:28.849 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   총 실행 시간: 1253ms
+14:51:28.849 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   스레드: reactor-http-nio-3
+14:51:28.849 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   → 3개 API가 순서대로 실행되어 각 API 시간의 합과 유사
+14:51:28.849 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService --   → ZIP 모드보다 느림! (병렬 vs 순차의 차이)
+14:51:28.850 [reactor-http-nio-3] INFO com.example.aggregator.service.AggregatorService -- ============================================================
+
+실측 결과:
+  ZIP 모드 실행 시간: 897ms (병렬)
+  flatMap 모드 실행 시간: 1256ms (순차)
+  시간 차이: 359ms (flatMap이 더 느림)
+============================================================
+검증 완료: ZIP(897ms) < flatMap(1256ms) - 병렬 실행이 순차 실행보다 빠름
+
+============================================================
+학습 시나리오 2: 타임아웃 → 폴백 응답 확인
+  결제 API 지연: 2초 | 서비스 타임아웃 설정: 1초
+  예상 결과: TimeoutException → onErrorResume → 폴백 응답
+============================================================
+14:51:28.905 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:28.905863 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:29.919 [parallel-3] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:29.912546 | 오류 유형: TimeoutException | 메시지: Did not observe any item or terminal signal within 1000ms in 'flatMap' (and no fallback has been configured) | 스레드: parallel-3 | 서킷브레이커 상태: CLOSED
+14:51:29.920 [parallel-3] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 요청 타임아웃 (1초 초과) - 결제 API 응답 지연 | 서킷브레이커 상태: CLOSED
+
+폴백 응답 내용:
+  paymentId: FALLBACK
+  status: 폴백 응답
+  reason: 요청 타임아웃 (1초 초과) - 결제 API 응답 지연
+  circuitBreakerState: CLOSED
+  message: 결제 서비스 일시 불가 - 폴백 응답을 반환합니다
+============================================================
+검증 완료: 결제 API 2초 지연 → 1초 타임아웃 → 폴백 응답 정상 반환
+
+============================================================
+학습 시나리오 3: 서킷브레이커 OPEN 상태 테스트
+  설정: 슬라이딩 윈도우 5, 실패율 임계값 50%, 최소 호출 5회
+  시나리오: 5회 연속 실패 → 실패율 100% → 서킷브레이커 OPEN
+============================================================
+
+  초기 서킷브레이커 상태: CLOSED
+14:51:30.925 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:30.925294 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:30.950 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:30.950297 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50668/payment | 스레드: reactor-http-nio-6 | 서킷브레이커 상태: CLOSED
+14:51:30.950 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50668/payment | 서킷브레이커 상태: CLOSED
+  시도 1/5 | 서킷브레이커 상태: CLOSED | 폴백응답: FALLBACK
+14:51:31.056 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.056676 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.060 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.060115 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50668/payment | 스레드: reactor-http-nio-6 | 서킷브레이커 상태: CLOSED
+14:51:31.060 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50668/payment | 서킷브레이커 상태: CLOSED
+  시도 2/5 | 서킷브레이커 상태: CLOSED | 폴백응답: FALLBACK
+14:51:31.163 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.163348 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.168 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.168049 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50668/payment | 스레드: reactor-http-nio-6 | 서킷브레이커 상태: CLOSED
+14:51:31.168 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50668/payment | 서킷브레이커 상태: CLOSED
+  시도 3/5 | 서킷브레이커 상태: CLOSED | 폴백응답: FALLBACK
+14:51:31.271 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.271082 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.275 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.275736 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50668/payment | 스레드: reactor-http-nio-6 | 서킷브레이커 상태: CLOSED
+14:51:31.275 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50668/payment | 서킷브레이커 상태: CLOSED
+  시도 4/5 | 서킷브레이커 상태: CLOSED | 폴백응답: FALLBACK
+14:51:31.379 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.379479 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.386 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.386256 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50668/payment | 스레드: reactor-http-nio-6 | 서킷브레이커 상태: OPEN
+14:51:31.386 [reactor-http-nio-6] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50668/payment | 서킷브레이커 상태: OPEN
+  시도 5/5 | 서킷브레이커 상태: OPEN | 폴백응답: FALLBACK
+
+  5회 실패 후 서킷브레이커 상태: OPEN
+14:51:31.488 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.488107 | 스레드: Test worker | 서킷브레이커 상태: OPEN
+14:51:31.489 [Test worker] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.489585 | 오류 유형: CallNotPermittedException | 메시지: CircuitBreaker 'payment' is OPEN and does not permit further calls | 스레드: Test worker | 서킷브레이커 상태: OPEN
+14:51:31.490 [Test worker] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서킷브레이커 오픈 상태 - 요청이 차단되었습니다 (현재 상태: OPEN) | 서킷브레이커 상태: OPEN
+
+  서킷 OPEN 후 추가 요청 결과: {paymentId=FALLBACK, status=폴백 응답, reason=서킷브레이커 오픈 상태 - 요청이 차단되었습니다 (현재 상태: OPEN), circuitBreakerState=OPEN, message=결제 서비스 일시 불가 - 폴백 응답을 반환합니다}
+
+  검증 완료: 5회 실패 → 서킷브레이커 OPEN → 추가 요청 차단 → 폴백 응답 반환
+============================================================
+
+============================================================
+학습 시나리오 4: OPEN → HALF-OPEN 자동 전환 테스트
+  오픈 대기 시간: 2초 (실제 설정은 10초)
+  automaticTransitionFromOpenToHalfOpenEnabled: true
+============================================================
+
+  Step 1: 5회 연속 실패로 서킷브레이커 OPEN 유도
+14:51:31.495 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.495789 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.503 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.503375 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50670/payment | 스레드: reactor-http-nio-7 | 서킷브레이커 상태: CLOSED
+14:51:31.503 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50670/payment | 서킷브레이커 상태: CLOSED
+    시도 1/5 | 상태: CLOSED
+14:51:31.504 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.504299 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.509 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.509697 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50670/payment | 스레드: reactor-http-nio-7 | 서킷브레이커 상태: CLOSED
+14:51:31.509 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50670/payment | 서킷브레이커 상태: CLOSED
+    시도 2/5 | 상태: CLOSED
+14:51:31.510 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.510513 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.514 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.514678 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50670/payment | 스레드: reactor-http-nio-7 | 서킷브레이커 상태: CLOSED
+14:51:31.514 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50670/payment | 서킷브레이커 상태: CLOSED
+    시도 3/5 | 상태: CLOSED
+14:51:31.515 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.515291 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.519 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.519644 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50670/payment | 스레드: reactor-http-nio-7 | 서킷브레이커 상태: CLOSED
+14:51:31.519 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50670/payment | 서킷브레이커 상태: CLOSED
+    시도 4/5 | 상태: CLOSED
+14:51:31.520 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:31.520125 | 스레드: Test worker | 서킷브레이커 상태: CLOSED
+14:51:31.526 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 API 실패] 시각: 2026-02-20T14:51:31.526728 | 오류 유형: InternalServerError | 메시지: 500 Internal Server Error from GET http://localhost:50670/payment | 스레드: reactor-http-nio-7 | 서킷브레이커 상태: OPEN
+14:51:31.527 [reactor-http-nio-7] WARN com.example.aggregator.service.AggregatorService -- [결제 폴백 응답] 원인: 서비스 오류: InternalServerError - 500 Internal Server Error from GET http://localhost:50670/payment | 서킷브레이커 상태: OPEN
+    시도 5/5 | 상태: OPEN
+  서킷 OPEN 상태 확인 완료
+
+  Step 2: 2.5초 대기 (오픈 대기 시간 2초 + 여유 0.5초)
+  2.5초 후 서킷브레이커 상태: HALF_OPEN
+
+  Step 3: 성공 응답으로 전환 후 결제 API 호출 (HALF-OPEN 검증)
+14:51:34.033 [Test worker] INFO com.example.aggregator.service.AggregatorService -- [결제 API 시작] 시각: 2026-02-20T14:51:34.033845 | 스레드: Test worker | 서킷브레이커 상태: HALF_OPEN
+14:51:34.248 [reactor-http-nio-7] INFO com.example.aggregator.service.AggregatorService -- [결제 API 완료] 시각: 2026-02-20T14:51:34.248764 | 스레드: reactor-http-nio-7 | 서킷브레이커 상태: HALF_OPEN
+  HALF-OPEN 후 결제 API 응답: {paymentId=PAY-001, status=완료, amount=150000, message=결제 정보 조회 성공}
+  요청 후 서킷브레이커 상태: HALF_OPEN
+
+  검증 완료: 서킷브레이커 OPEN → HALF_OPEN 전환 시나리오 확인
+  실제 운영 환경에서는 10초 대기 후 HALF-OPEN으로 전환됩니다.
+============================================================
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,13 @@
+# mock-external-server 설정
+server:
+  port: 8081  # 포트 8081에서 실행 (api-aggregator는 8080)
+
+spring:
+  application:
+    name: mock-external-server
+
+logging:
+  level:
+    com.example.mock: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

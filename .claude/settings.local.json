@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gradle :api-aggregator:compileKotlin:*)",
+      "Bash(gradle:*)"
+    ]
+  }
+}
