@@ -1,0 +1,102 @@
+{
+  "info": {
+    "_postman_id": "c9e9a218-5196-4c42-a34c-a8d88c411d03",
+    "name": "webflux-learning",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "24978404"
+  },
+  "item": [
+    {
+      "name": "zip",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/aggregate?mode=zip",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "aggregate"
+          ],
+          "query": [
+            {
+              "key": "mode",
+              "value": "zip"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "flat",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/aggregate?mode=flat",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "aggregate"
+          ],
+          "query": [
+            {
+              "key": "mode",
+              "value": "flat"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "circuit breaker",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/aggregate?fail=true",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "aggregate"
+          ],
+          "query": [
+            {
+              "key": "fail",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "half open",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/aggregate",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "aggregate"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
